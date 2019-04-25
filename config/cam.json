@@ -1,5 +1,6 @@
 {
   "width": 3264,
   "height": 2448,
-  "exposure": 0.6
+  "auto": 0,
+  "exposure": 0.1
 }

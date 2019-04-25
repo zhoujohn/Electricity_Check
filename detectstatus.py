@@ -108,7 +108,7 @@ def check_Hsv_LED(inImg,circles):
   
 
         
-        lower_hsv_G = np.array([60, 0, 220],dtype=np.uint8) # 绿色
+        lower_hsv_G = np.array([60, 0, 220],dtype=np.uint8) #green
         upper_hsv_G = np.array([255, 255, 255],dtype=np.uint8)
 
         mask_G = cv2.inRange(img_hsv,lower_hsv_G,upper_hsv_G)
@@ -121,7 +121,7 @@ def check_Hsv_LED(inImg,circles):
         
 
         
-        lower_hsv_R = np.array([0, 0, 220],dtype=np.uint8) # 红色
+        lower_hsv_R = np.array([0, 0, 220],dtype=np.uint8) #green
         upper_hsv_R = np.array([50, 255, 255],dtype=np.uint8)
 
         mask_R = cv2.inRange(img_hsv,lower_hsv_R,upper_hsv_R)

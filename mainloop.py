@@ -10,12 +10,14 @@ def load_cam_config():
 	width = 0
 	height = 0
 	expo = 0.0
+	auto = 1
 	with open("./config/cam.json") as load_f:
 		load_dict = json.load(load_f)
 		width = load_dict["width"]
 		height = load_dict["height"]
 		expo = load_dict["exposure"]
-	return width, height, expo
+		auto = load_dict["auto"]
+	return width, height, expo, auto
 
 def set_camera():
 	cam = cv2.VideoCapture(0)
@@ -25,12 +27,15 @@ def set_camera():
 	expo = cam.get(cv2.CAP_PROP_EXPOSURE)
 	print ("camera width is %d, height is %d, exposure is %f" % (width,height,expo))
 	# read camera config file
-	width,height,expo = load_cam_config()
+	width,height,expo,auto = load_cam_config()
 
 	cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 	cam.set(cv2.CAP_PROP_FRAME_HEIGHT,height)
-	cam.set(cv2.CAP_PROP_AUTO_EXPOSURE,0.25)  # set as manual exposure
-	cam.set(cv2.CAP_PROP_EXPOSURE,expo)   # 0.1, 0.05, 0.02
+	if auto == 0:
+		cam.set(cv2.CAP_PROP_AUTO_EXPOSURE,0.25)  # set as manual exposure(0.75 auto, 0.25 manual)
+		cam.set(cv2.CAP_PROP_EXPOSURE,expo)   # 0.1, 0.05, 0.02
+	else:
+		cam.set(cv2.CAP_PROP_AUTO_EXPOSURE,0.75)  # manual exposure
 	cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('M', 'J', 'P', 'G'))
 
 	width = cam.get(cv2.CAP_PROP_FRAME_WIDTH)
@@ -67,6 +72,7 @@ img_counter = 0
 
 while True:
 	cam = set_camera()
+	time.sleep(5)
 	target_num = 0
 	target_num,target_matrix = read_anno_config()
 	print target_num, target_matrix

@@ -4,6 +4,19 @@ import time
 import sys
 import json
 
+def load_cam_config():
+	width = 0
+	height = 0
+	expo = 0.0
+	auto = 1
+	with open("./config/cam.json") as load_f:
+		load_dict = json.load(load_f)
+		width = load_dict["width"]
+		height = load_dict["height"]
+		expo = load_dict["exposure"]
+		auto = load_dict["auto"]
+	return width, height, expo, auto
+
 
 def set_camera():
 	cam = cv2.VideoCapture(0)
@@ -11,10 +24,16 @@ def set_camera():
 	height = cam.get(cv2.CAP_PROP_FRAME_HEIGHT)
 	expo = cam.get(cv2.CAP_PROP_EXPOSURE)
 	print ("default camera width is %d, height is %d, exposure is %f" % (width,height,expo))
-	cam.set(cv2.CAP_PROP_FRAME_WIDTH, 3264)
-	cam.set(cv2.CAP_PROP_FRAME_HEIGHT,2448)
-	cam.set(cv2.CAP_PROP_AUTO_EXPOSURE,0.25)
-	cam.set(cv2.CAP_PROP_EXPOSURE,0.6)   # 0.1, 0.05, 0.02
+	# read camera config file
+	width,height,expo,auto = load_cam_config()
+
+	cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+	cam.set(cv2.CAP_PROP_FRAME_HEIGHT,height)
+	if auto == 0:
+		cam.set(cv2.CAP_PROP_AUTO_EXPOSURE,0.25)  # manual exposure
+		cam.set(cv2.CAP_PROP_EXPOSURE,expo)   # 0.1, 0.05, 0.02
+	else:
+		cam.set(cv2.CAP_PROP_AUTO_EXPOSURE,0.75)  # auto exposure
 	cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('M', 'J', 'P', 'G'))
 
 	width = cam.get(cv2.CAP_PROP_FRAME_WIDTH)
@@ -35,7 +54,7 @@ sys.setdefaultencoding("utf-8")
 
 img_counter = 3
 cam = set_camera()
-time.sleep(3)
+time.sleep(5)
 
 while img_counter:
 	if cam.isOpened():
