@@ -71,7 +71,7 @@ while True:
 	target_num,target_matrix = read_anno_config()
 	print target_num, target_matrix
 
-	while cam.isOpened()
+	while cam.isOpened():
 		ret, frame = cam.read()
 		if not ret:
 			break
