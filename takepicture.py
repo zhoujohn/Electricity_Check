@@ -20,25 +20,25 @@ def load_cam_config():
 
 def set_camera():
 	cam = cv2.VideoCapture(0)
-	width = cam.get(cv2.CAP_PROP_FRAME_WIDTH)
-	height = cam.get(cv2.CAP_PROP_FRAME_HEIGHT)
-	expo = cam.get(cv2.CAP_PROP_EXPOSURE)
+	width = cam.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
+	height = cam.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
+	expo = cam.get(cv2.cv.CV_CAP_PROP_EXPOSURE)*100
 	print ("default camera width is %d, height is %d, exposure is %f" % (width,height,expo))
 	# read camera config file
 	width,height,expo,auto = load_cam_config()
 
-	cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-	cam.set(cv2.CAP_PROP_FRAME_HEIGHT,height)
+	cam.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, width)
+	cam.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT,height)
 	if auto == 0:
-		cam.set(cv2.CAP_PROP_AUTO_EXPOSURE,0.25)  # manual exposure
-		cam.set(cv2.CAP_PROP_EXPOSURE,expo)   # 0.1, 0.05, 0.02
+		#cam.set(cv2.cv.CAP_PROP_AUTO_EXPOSURE,0.25)  # manual exposure
+		cam.set(cv2.cv.CV_CAP_PROP_EXPOSURE,expo)   # 0.1, 0.05, 0.02
 	else:
-		cam.set(cv2.CAP_PROP_AUTO_EXPOSURE,0.75)  # auto exposure
-	cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('M', 'J', 'P', 'G'))
+		cam.set(cv2.cv.CV_CAP_PROP_EXPOSURE,0.0)  # auto exposure
+	#cam.set(cv2.cv.CV_CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('M', 'J', 'P', 'G'))
 
-	width = cam.get(cv2.CAP_PROP_FRAME_WIDTH)
-	height = cam.get(cv2.CAP_PROP_FRAME_HEIGHT)
-	expo = cam.get(cv2.CAP_PROP_EXPOSURE)
+	width = cam.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
+	height = cam.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
+	expo = cam.get(cv2.cv.CV_CAP_PROP_EXPOSURE)*100
 	print ("test camera width is %d, height is %d, exposure is %f" % (width,height,expo))
 	
 	return cam
@@ -54,6 +54,8 @@ sys.setdefaultencoding("utf-8")
 
 img_counter = 3
 cam = set_camera()
+#fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+#cam = cv2.VideoCapture(0)
 time.sleep(5)
 
 while img_counter:
@@ -61,8 +63,8 @@ while img_counter:
 		ret, frame = cam.read()
 		if not ret:
 			break
-		cv2.imwrite('/home/pi/Program/'+str(img_counter)+'.jpg', frame)
-		print ("image file saved in /home/pi/Program/")
+		cv2.imwrite('../'+str(img_counter)+'.jpg',frame )
+		print ("image file saved")
 	
 	time.sleep(2) #Sleep(2)
 	img_counter = img_counter - 1

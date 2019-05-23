@@ -22,25 +22,25 @@ def load_cam_config():
 def set_camera():
 	cam = cv2.VideoCapture(0)
 	# read camera default internal config
-	width = cam.get(cv2.CAP_PROP_FRAME_WIDTH)
-	height = cam.get(cv2.CAP_PROP_FRAME_HEIGHT)
-	expo = cam.get(cv2.CAP_PROP_EXPOSURE)
+	width = cam.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
+	height = cam.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
+	expo = cam.get(cv2.cv.CV_CAP_PROP_EXPOSURE)
 	print ("camera width is %d, height is %d, exposure is %f" % (width,height,expo))
 	# read camera config file
 	width,height,expo,auto = load_cam_config()
 
-	cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-	cam.set(cv2.CAP_PROP_FRAME_HEIGHT,height)
+	cam.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, width)
+	cam.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT,height)
 	if auto == 0:
-		cam.set(cv2.CAP_PROP_AUTO_EXPOSURE,0.25)  # set as manual exposure(0.75 auto, 0.25 manual)
-		cam.set(cv2.CAP_PROP_EXPOSURE,expo)   # 0.1, 0.05, 0.02
+		#cam.set(cv2.cv.CV_CAP_PROP_AUTO_EXPOSURE,0.25)  # set as manual exposure(0.75 auto, 0.25 manual)
+		cam.set(cv2.cv.CV_CAP_PROP_EXPOSURE,expo)   # 0.1, 0.05, 0.02
 	else:
-		cam.set(cv2.CAP_PROP_AUTO_EXPOSURE,0.75)  # manual exposure
-	cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('M', 'J', 'P', 'G'))
+		cam.set(cv2.cv.CV_CAP_PROP_EXPOSURE,0.0)  # manual exposure
+	#cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter.fourcc('M', 'J', 'P', 'G'))
 
-	width = cam.get(cv2.CAP_PROP_FRAME_WIDTH)
-	height = cam.get(cv2.CAP_PROP_FRAME_HEIGHT)
-	expo = cam.get(cv2.CAP_PROP_EXPOSURE)
+	width = cam.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
+	height = cam.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
+	expo = cam.get(cv2.cv.CV_CAP_PROP_EXPOSURE)
 	print ("test camera width is %d, height is %d, exposure is %f" % (width,height,expo))
 	
 	return cam
