@@ -8,11 +8,10 @@ def detect_spatial_LED(inImg):
     w = inImg.shape[1]
     h = inImg.shape[0]
     
-    if w > 640 or h > 480:
-        scale = 640 / w
-    elif w < 320 or h < 240:
-        scale = 320 / w
-    else: scale = 1
+    if h < 100:
+        scale = 2
+    else:
+        scale = 1
 
     
     resizeImg = cv2.resize(inImg, (int(scale * w), int(scale* h)), interpolation=cv2.INTER_CUBIC)
@@ -36,7 +35,7 @@ def detect_spatial_LED(inImg):
         print("cannot get valid value!")
         return 
     elif circles.all():
-        print("get valid value")
+        #print("get valid value")
         if len(circles) >= 1:
             circles = np.uint16(np.around(circles))
                 
@@ -74,10 +73,8 @@ def check_Hsv_LED(inImg,circles):
     w = inImg.shape[1]
     h = inImg.shape[0]
     
-    if w > 640 or h > 480:
-        scale = 640 / w
-    elif w < 320 or h < 240:
-        scale = 320 / w
+    if h < 100:
+        scale = 2
     else:
         scale = 1
         
@@ -88,15 +85,12 @@ def check_Hsv_LED(inImg,circles):
     for i in circles[0,:]:
         x = i[0]
         
-        if x >= 0.5 * wigth_tmp:
-            continue
-        else:
-            y = i[1]
-            r = i[2]
-            rect_x = (x - r)
-            rect_y = (y - r)
-            crop_img = resizeImg[rect_y:(y+r),rect_x:(x+r)]
-            light_imgs.append(crop_img)
+        y = i[1]
+        r = i[2]
+        rect_x = (x - r)
+        rect_y = (y - r)
+        crop_img = resizeImg[rect_y:(y+r),rect_x:(x+r)]
+        light_imgs.append(crop_img)
 
     light_colors = []
 
@@ -152,8 +146,8 @@ def check_Hsv_LED(inImg,circles):
 def detectstatus(src):
     w = src.shape[1]
     h = src.shape[0]
-    if w < 320 or h < 240:
-        scale = 320 / w
+    if h < 100:
+        scale = 2
     else:
         scale = 1
         
@@ -164,12 +158,45 @@ def detectstatus(src):
 
     if circles is None:
         #print("cannot get valid value!")
-        light_colors = [[0, 'E'], [1, 'E']]
+        light_colors = [[0, 'N'], [1, 'N']]
     elif circles.all():
-        light_colors = check_Hsv_LED(resizeImg,circles)
+        if len(circles) >= 1:
+            light_colors = check_Hsv_LED(resizeImg,circles)
+        else:
+            light_colors = [[0, 'N'], [1, 'N']]
         #print(light_colors) #[[0, 'R']]  or [[0, 'R'], [1, 'N']]   
     else:
-        light_colors = [[0, 'E'], [1, 'E']]
+        light_colors = [[0, 'N'], [1, 'N']]
+
+    print(light_colors)
+    
+    return light_colors
+
+
+def detectsingle(src):
+    w = src.shape[1]
+    h = src.shape[0]
+    if h < 100:
+        scale = 2
+    else:
+        scale = 1
+        
+    resizeImg = cv2.resize(src, (int(scale * w), int(scale* h)), interpolation=cv2.INTER_CUBIC)
+    
+    circles = [[]]
+    circles = detect_spatial_LED(resizeImg)
+
+    if circles is None:
+        #print("cannot get valid value!")
+        light_colors = [[0, 'N']]
+    elif circles.all():
+        if len(circles) >= 1:
+            light_colors = check_Hsv_LED(resizeImg,circles)
+        else:
+            light_colors = [[0, 'N']]
+        #print(light_colors) #[[0, 'R']]  or [[0, 'R'], [1, 'N']]   
+    else:
+        light_colors = [[0, 'N']]
 
     print(light_colors)
     

@@ -97,34 +97,75 @@ while True:
 			x1 = m12[0]
 			#print y0,y1,x0,x1
 			cropped = frame[y0:y1,x0:x1]   #[y0:y1, x0:x1]
-			r_data = 10
-			x_data = detectstatus(cropped)
+			r_data = 0;
 			###############################################################
 			# style--> "name"(such as AA1.1141): value(such as 1,2,3)
 			# B Y G R, 0x00(B)00(Y)00(G)00(R), 0(1:OK,0:Err)0(1:On,0:Off)
 			###############################################################
-			if x_data is None:
-				r_data = 0  # default R:off, G:off
-			elif len(x_data):
-				#parse status of lamp
-				x = len(x_data)
-				y = 0
-				while x:
-					tmp0 = x_data[y]
-					tmp1 = tmp0[1]
-					if tmp1 == 'R':
-						r_data = r_data + 1
-					elif tmp1 == 'G':
-						r_data = r_data + 4
-					elif tmp1 == 'E':
-						r_data = 0
-					else:
+			pos1 = m0.find("GREEN")
+			pos2 = m0.find("RED")
+			pos3 = m0.find("YELLOW")
+			if pos1 >=0:  # GREEN
+				m0 = m0[0:pos1-1]
+				tmp = send_data.get(m0)
+				if tmp == None:
+					tmp = 0
+				r_data = tmp + 8
+				x_data = detectsingle(cropped)
+				if len(x_data) > 0:
+					if xdata[0][1] == 'N' or xdata[0][1] == 'E':
 						r_data = r_data
-					x = x - 1
-					y = y + 1
-					#print ("lamp status data is %d", (r_data))
+					else:
+						r_data = r_data + 4
+			elif pos2 >= 0: # RED
+				m0 = m0[0:pos2-1]
+				tmp = send_data.get(m0)
+				if tmp == None:
+					tmp = 0
+				r_data = tmp + 2
+				x_data = detectsingle(cropped)
+				if len(x_data) > 0:
+					if xdata[0][1] == 'N' or xdata[0][1] == 'E':
+						r_data = r_data
+					else:
+						r_data = r_data + 1
+			elif pos3 >= 0: # YELLOW
+				m0 = m0[0:pos3-1]
+				tmp = send_data.get(m0)
+				if tmp == None:
+					tmp = 0
+				r_data = tmp + 32
+				x_data = detectsingle(cropped)
+				if len(x_data) > 0:
+					if xdata[0][1] == 'N' or xdata[0][1] == 'E':
+						r_data = r_data
+					else:
+						r_data = r_data + 16
 			else:
-				r_data = 0
+				r_data = 10
+				x_data = detectstatus(cropped)
+				if x_data is None:
+					r_data = 0  # default R:off, G:off
+				elif len(x_data):
+					#parse status of lamp
+					x = len(x_data)
+					y = 0
+					while x:
+						tmp0 = x_data[y]
+						tmp1 = tmp0[1]
+						if tmp1 == 'R':
+							r_data = r_data + 1
+						elif tmp1 == 'G':
+							r_data = r_data + 4
+						elif tmp1 == 'E':
+							r_data = 0
+						else:
+							r_data = r_data
+						x = x - 1
+						y = y + 1
+						#print ("lamp status data is %d", (r_data))
+				else:
+					r_data = 0
 			send_data.update({m0: r_data})
 			i = i - 1
 			j = j + 1
