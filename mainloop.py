@@ -4,6 +4,7 @@ import time
 import sys
 import json
 from detectstatus import detectstatus
+from detectstatus import detectsingle
 from network import post_data
 
 def load_cam_config():
