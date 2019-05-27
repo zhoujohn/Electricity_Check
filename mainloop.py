@@ -114,7 +114,7 @@ while True:
 				r_data = tmp + 8
 				x_data = detectsingle(cropped)
 				if len(x_data) > 0:
-					if xdata[0][1] == 'N' or xdata[0][1] == 'E':
+					if x_data[0][1] == 'N' or x_data[0][1] == 'E':
 						r_data = r_data
 					else:
 						r_data = r_data + 4
@@ -126,7 +126,7 @@ while True:
 				r_data = tmp + 2
 				x_data = detectsingle(cropped)
 				if len(x_data) > 0:
-					if xdata[0][1] == 'N' or xdata[0][1] == 'E':
+					if x_data[0][1] == 'N' or x_data[0][1] == 'E':
 						r_data = r_data
 					else:
 						r_data = r_data + 1
@@ -138,7 +138,7 @@ while True:
 				r_data = tmp + 32
 				x_data = detectsingle(cropped)
 				if len(x_data) > 0:
-					if xdata[0][1] == 'N' or xdata[0][1] == 'E':
+					if x_data[0][1] == 'N' or x_data[0][1] == 'E':
 						r_data = r_data
 					else:
 						r_data = r_data + 16
