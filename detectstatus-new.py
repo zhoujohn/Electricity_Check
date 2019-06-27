@@ -96,7 +96,7 @@ def detect_LED_green(inImg):
     #th2 = cv2.adaptiveThreshold(gray_img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
   
     circles = [[0,0,0]] 
-    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=100,param2=10,minRadius=12,maxRadius=40) #10,40
+    circles = cv2.HoughCircles(img,cv2.cv.CV_HOUGH_GRADIENT,1,50,param1=100,param2=10,minRadius=12,maxRadius=40) #10,40
     #circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=80,param2=30,minRadius=10,maxRadius=40) #10,40
 
     #circles = cv2.HoughCircles(img,cv2.cv.CV_HOUGH_GRADIENT,1,50,param1=80,param2=30,minRadius=10,maxRadius=50)
@@ -148,7 +148,7 @@ def detect_LED_red(inImg):
     #th2 = cv2.adaptiveThreshold(gray_img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
   
     circles = [[0,0,0]] 
-    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=100,param2=10,minRadius=12,maxRadius=40) #10,40
+    circles = cv2.HoughCircles(img,cv2.cv.CV_HOUGH_GRADIENT,1,50,param1=100,param2=10,minRadius=12,maxRadius=40) #10,40
     #circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=80,param2=30,minRadius=10,maxRadius=40) #10,40
 
     #circles = cv2.HoughCircles(img,cv2.cv.CV_HOUGH_GRADIENT,1,50,param1=80,param2=30,minRadius=10,maxRadius=50)
@@ -199,7 +199,7 @@ def detect_LED_yellow(inImg):
     #th2 = cv2.adaptiveThreshold(gray_img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
   
     circles = [[0,0,0]] 
-    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=100,param2=10,minRadius=12,maxRadius=40) #10,40
+    circles = cv2.HoughCircles(img,cv2.cv.CV_HOUGH_GRADIENT,1,50,param1=100,param2=10,minRadius=12,maxRadius=40) #10,40
     #circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=80,param2=30,minRadius=10,maxRadius=40) #10,40
 
     #circles = cv2.HoughCircles(img,cv2.cv.CV_HOUGH_GRADIENT,1,50,param1=80,param2=30,minRadius=10,maxRadius=50)
@@ -257,7 +257,7 @@ def detect_spatial_LED(inImg):
     #th2 = cv2.adaptiveThreshold(gray_img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
   
     circles = [[0,0,0]] 
-    circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=100,param2=10,minRadius=12,maxRadius=40) #10,40
+    circles = cv2.HoughCircles(img,cv2.cv.CV_HOUGH_GRADIENT,1,50,param1=100,param2=10,minRadius=12,maxRadius=40) #10,40
     #circles = cv2.HoughCircles(img,cv2.HOUGH_GRADIENT,1,50,param1=80,param2=30,minRadius=10,maxRadius=40) #10,40
 
     #circles = cv2.HoughCircles(img,cv2.cv.CV_HOUGH_GRADIENT,1,50,param1=80,param2=30,minRadius=10,maxRadius=50)
