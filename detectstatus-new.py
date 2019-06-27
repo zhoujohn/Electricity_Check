@@ -23,7 +23,7 @@ def detect_Lockgate_Status(inImg, draw=False):
 
     areaThresh = resizeImg.shape[0]*resizeImg.shape[1]
     minArea = 0.1 * areaThresh
-    maxArea = 0.8 * areaThresh
+    maxArea = 0.6 * areaThresh
 
     showimg =resizeImg.copy()
 
@@ -34,7 +34,7 @@ def detect_Lockgate_Status(inImg, draw=False):
 
 
     img = cv2.medianBlur(gray_img, 5)
-    ret,th2 = cv2.threshold(img,120,255,cv2.THRESH_BINARY_INV)
+    ret,th2 = cv2.threshold(img,90,255,cv2.THRESH_BINARY_INV)
     
     
     #print(ret,th2 )
@@ -81,7 +81,7 @@ def detect_LED_green(inImg):
 
     hsv_img = cv2.cvtColor(resizeImg, cv2.COLOR_BGR2HSV)
 
-    low_range1 = np.array([60, 100, 60])
+    low_range1 = np.array([60, 130, 40])
     high_range1 = np.array([96, 255, 255])
     th1 = cv2.inRange(hsv_img, low_range1, high_range1)
     dilated = cv2.dilate(th1, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (8, 8)), iterations=2)
@@ -133,7 +133,7 @@ def detect_LED_red(inImg):
 
     hsv_img = cv2.cvtColor(resizeImg, cv2.COLOR_BGR2HSV)
 
-    low_range = np.array([0, 120, 80])
+    low_range = np.array([0, 130, 60])
     high_range = np.array([5, 255, 255])
     th = cv2.inRange(hsv_img, low_range, high_range)
     dilated = cv2.dilate(th, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (8, 8)), iterations=2)
@@ -184,7 +184,7 @@ def detect_LED_yellow(inImg):
 
     hsv_img = cv2.cvtColor(resizeImg, cv2.COLOR_BGR2HSV)
 
-    low_range = np.array([15, 100, 70])
+    low_range = np.array([15, 130, 60])
     high_range = np.array([40, 255, 255])
     th = cv2.inRange(hsv_img, low_range, high_range)
     dilated = cv2.dilate(th, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (8, 8)), iterations=2)
@@ -508,8 +508,8 @@ def check_Hsv_LED(inImg,circles):
         rect_y = (y - 15)
         crop_img = resizeImg[rect_y:(y+15),rect_x:(x+15)]
         light_imgs.append(crop_img)
-        cv2.imshow("cropped image", crop_img)
-        cv2.waitKey(2)
+        #cv2.imshow("cropped image", crop_img)
+        #cv2.waitKey(2)
 
     light_colors = []
 
@@ -518,6 +518,9 @@ def check_Hsv_LED(inImg,circles):
         light_color = 0
         img_gray = cv2.cvtColor(cropimg, cv2.COLOR_BGR2GRAY)
         img = cv2.medianBlur(img_gray, 5)
+        if img is None:
+            light_colors.append(light_color)
+            return light_colors
         ret, img = cv2.threshold(img,120,255,cv2.THRESH_TOZERO)
   
         #cv2.imshow("gray", img)
