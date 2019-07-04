@@ -48,27 +48,32 @@ def set_camera(num):
 	return cam
 
 
-def read_anno_config(num):
+def read_anno_config():
 	counter = 0
 	matrix = []
-	fileurl = "./config/anno"+str(num)+".json"
-	with open(fileurl) as load_f:
+	with open("./config/anno.json") as load_f:
 		load_dict = json.load(load_f)
 		load_dict1 = load_dict["shapes"]
 		for val in load_dict1:
+			element = [val["label"],val["points"],val["level_R"],val["level_G"]]
+			#element.append(val["label"])
+			#element.append(val["points"])
+			#element.append(val["level_R"])
+			#element.append(val["level_G"])
+			matrix.append(element)
 			counter = counter + 1
-			print val
-			print counter
-			matrix.append(val["label"])
-			matrix.append(val["points"])
-		print matrix
+			print (val)
+			print (counter)
+		print (matrix)
 	return counter,matrix
 
 def start_detect(i,j,frame,target_matrix):
-	m0 = target_matrix[j*2]
-	m1 = target_matrix[j*2+1]
+	m0 = target_matrix[j][0]
+	m1 = target_matrix[j][1]
 	m11 = m1[0]
 	m12 = m1[1]
+	rlevel = target_matrix[j][2]
+	glevel = target_matrix[j][3]
 	#print j,counter,m0,m1,m11,m12
 	y0 = m11[1]
 	y1 = m12[1]
@@ -104,7 +109,7 @@ def start_detect(i,j,frame,target_matrix):
 			if tmp == None:
 				tmp = 0
 			r_data = tmp
-			x_data = detectsingle(cropped,"GREEN")
+			x_data = detectsingle(cropped,"GREEN",rlevel)
 			if x_data[0][1] == 'On':
 				r_data = r_data + 12
 			elif x_data[0][1] == 'Off':
@@ -117,7 +122,7 @@ def start_detect(i,j,frame,target_matrix):
 			if tmp == None:
 				tmp = 0
 			r_data = tmp
-			x_data = detectsingle(cropped,"RED")
+			x_data = detectsingle(cropped,"RED",rlevel)
 			if len(x_data) > 0:
 				if x_data[0][1] == 'On':
 					r_data = r_data + 3
@@ -131,7 +136,7 @@ def start_detect(i,j,frame,target_matrix):
 			if tmp == None:
 				tmp = 0
 			r_data = tmp
-			x_data = detectsingle(cropped,"YELLOW")
+			x_data = detectsingle(cropped,"YELLOW",rlevel)
 			if len(x_data) > 0:
 				if x_data[0][1] == 'On':
 					r_data = r_data + 48
@@ -141,7 +146,7 @@ def start_detect(i,j,frame,target_matrix):
 					r_data = r_data
 		else:
 			r_data = 0
-			x_data = detectstatus(cropped)
+			x_data = detectstatus(cropped,rlevel,glevel)
 			if x_data is not None:
 				x = len(x_data)
 				y = 0

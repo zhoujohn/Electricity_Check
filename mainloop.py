@@ -54,12 +54,16 @@ def read_anno_config():
 		load_dict = json.load(load_f)
 		load_dict1 = load_dict["shapes"]
 		for val in load_dict1:
+			element = [val["label"],val["points"],val["level_R"],val["level_G"]]
+			#element.append(val["label"])
+			#element.append(val["points"])
+			#element.append(val["level_R"])
+			#element.append(val["level_G"])
+			matrix.append(element)
 			counter = counter + 1
-			print val
-			print counter
-			matrix.append(val["label"])
-			matrix.append(val["points"])
-		print matrix
+			print (val)
+			print (counter)
+		print (matrix)
 	return counter,matrix
 
 
@@ -71,6 +75,129 @@ sys.setdefaultencoding("utf-8")
 
 img_counter = 0
 
+while True:
+	cam = set_camera()
+	time.sleep(5)
+	target_num = 0
+	target_num,target_matrix = read_anno_config()
+	print (target_num, target_matrix)
+
+	while cam.isOpened():
+		ret, frame = cam.read()
+		if not ret:
+			break
+		#crop image and detect status
+		#frame = cv2.imread("F:\\Pic\\4442.jpg")
+		i = target_num
+		j = 0
+		send_data = {}
+		while i:
+			m0 = target_matrix[j][0]
+			m1 = target_matrix[j][1]
+			m11 = m1[0]
+			m12 = m1[1]
+			rlevel = target_matrix[j][2]
+			glevel = target_matrix[j][3]
+			#print j,counter,m0,m1,m11,m12
+			y0 = m11[1]
+			y1 = m12[1]
+			x0 = m11[0]
+			x1 = m12[0]
+			#print y0,y1,x0,x1
+			cropped = frame[y0:y1,x0:x1]   #[y0:y1, x0:x1]
+			r_data = 0;
+			###############################################################
+			# style--> "name"(such as AA1.1141): value(such as 1,2,3)
+			# B Y G R, 0x00(B)00(Y)00(G)00(R), 0(1:OK,0:Err)0(1:On,0:Off)
+			###############################################################
+			pos1 = m0.find("GREEN")
+			pos2 = m0.find("RED")
+			pos3 = m0.find("YELLOW")
+			if pos1 >= 0:  # GREEN
+				m0 = m0[0:pos1-1]
+				tmp = send_data.get(m0)
+				if tmp == None:
+					tmp = 0
+				r_data = tmp
+				x_data = detectsingle(cropped,"GREEN",rlevel)
+				if x_data[0][1] == 'On':
+					r_data = r_data + 12
+				elif x_data[0][1] == 'Off':
+					r_data = r_data + 8
+				else:
+					r_data = r_data
+			elif pos2 >= 0: # RED
+				m0 = m0[0:pos2-1]
+				tmp = send_data.get(m0)
+				if tmp == None:
+					tmp = 0
+				r_data = tmp
+				x_data = detectsingle(cropped,"RED",rlevel)
+				if len(x_data) > 0:
+					if x_data[0][1] == 'On':
+						r_data = r_data + 3
+					elif x_data[0][1] == 'Off':
+						r_data = r_data + 2
+					else:
+						r_data = r_data
+			elif pos3 >= 0: # YELLOW
+				m0 = m0[0:pos3-1]
+				tmp = send_data.get(m0)
+				if tmp == None:
+					tmp = 0
+				r_data = tmp
+				x_data = detectsingle(cropped,"YELLOW",rlevel)
+				if len(x_data) > 0:
+					if x_data[0][1] == 'On':
+						r_data = r_data + 48
+					elif x_data[0][1] == 'Off':
+						r_data = r_data + 32
+					else:
+						r_data = r_data
+			else:
+				r_data = 0
+				x_data = detectstatus(cropped,rlevel,glevel)
+				if x_data is not None:
+					x = len(x_data)
+					y = 0
+					while x:
+						tmp0 = x_data[y]
+						tmp1 = tmp0[0]
+						tmp2 = tmp0[1]
+						if tmp1 == 0: # red
+							if tmp2 == 'On':
+								r_data = r_data + 3
+							elif tmp2 == 'Off':
+								r_data = r_data + 2
+							else:
+								r_data = r_data
+						else: # green
+							if tmp2 == 'On':
+								r_data = r_data + 12
+							elif tmp2 == 'Off':
+								r_data = r_data + 8
+							else:
+								r_data = r_data
+						x = x - 1
+						y = y + 1
+						#print ("lamp status data is %d", (r_data))
+				else:
+					r_data = 0
+			send_data.update({m0: r_data})
+			i = i - 1
+			j = j + 1
+		#send detection result to network
+		print (send_data)
+		post_data(send_data,requrl,connection)
+		img_counter += 1
+		print("frame counter is: %d" %(img_counter))
+		time.sleep(2)
+
+	cam.release()
+	cv2.destroyAllWindows()
+	time.sleep(5)	#delay 5s
+
+'''
 while True:
 	cam = set_camera()
 	time.sleep(5)
@@ -106,62 +233,71 @@ while True:
 			pos1 = m0.find("GREEN")
 			pos2 = m0.find("RED")
 			pos3 = m0.find("YELLOW")
-			if pos1 >=0:  # GREEN
+			if pos1 >= 0:  # GREEN
 				m0 = m0[0:pos1-1]
 				tmp = send_data.get(m0)
 				if tmp == None:
 					tmp = 0
-				r_data = tmp + 8
-				x_data = detectsingle(cropped)
-				if len(x_data) > 0:
-					if x_data[0][1] == 'N' or x_data[0][1] == 'E':
-						r_data = r_data
-					else:
-						r_data = r_data + 4
+				r_data = tmp
+				x_data = detectsingle(cropped,"GREEN")
+				if x_data[0][1] == 'On':
+					r_data = r_data + 12
+				elif x_data[0][1] == 'Off':
+					r_data = r_data + 8
+				else:
+					r_data = r_data
 			elif pos2 >= 0: # RED
 				m0 = m0[0:pos2-1]
 				tmp = send_data.get(m0)
 				if tmp == None:
 					tmp = 0
-				r_data = tmp + 2
-				x_data = detectsingle(cropped)
+				r_data = tmp
+				x_data = detectsingle(cropped,"RED")
 				if len(x_data) > 0:
-					if x_data[0][1] == 'N' or x_data[0][1] == 'E':
-						r_data = r_data
+					if x_data[0][1] == 'On':
+						r_data = r_data + 3
+					elif x_data[0][1] == 'Off':
+						r_data = r_data + 2
 					else:
-						r_data = r_data + 1
+						r_data = r_data
 			elif pos3 >= 0: # YELLOW
 				m0 = m0[0:pos3-1]
 				tmp = send_data.get(m0)
 				if tmp == None:
 					tmp = 0
-				r_data = tmp + 32
-				x_data = detectsingle(cropped)
+				r_data = tmp
+				x_data = detectsingle(cropped,"YELLOW")
 				if len(x_data) > 0:
-					if x_data[0][1] == 'N' or x_data[0][1] == 'E':
-						r_data = r_data
+					if x_data[0][1] == 'On':
+						r_data = r_data + 48
+					elif x_data[0][1] == 'Off':
+						r_data = r_data + 32
 					else:
-						r_data = r_data + 16
+						r_data = r_data
 			else:
-				r_data = 10
+				r_data = 0
 				x_data = detectstatus(cropped)
-				if x_data is None:
-					r_data = 0  # default R:off, G:off
-				elif len(x_data):
-					#parse status of lamp
+				if x_data is not None:
 					x = len(x_data)
 					y = 0
 					while x:
 						tmp0 = x_data[y]
-						tmp1 = tmp0[1]
-						if tmp1 == 'R':
-							r_data = r_data + 1
-						elif tmp1 == 'G':
-							r_data = r_data + 4
-						elif tmp1 == 'E':
-							r_data = 0
-						else:
-							r_data = r_data
+						tmp1 = tmp0[0]
+						tmp2 = tmp0[1]
+						if tmp1 == 0: # red
+							if tmp2 == 'On':
+								r_data = r_data + 3
+							elif tmp2 == 'Off':
+								r_data = r_data + 2
+							else:
+								r_data = r_data
+						else: # green
+							if tmp2 == 'On':
+								r_data = r_data + 12
+							elif tmp2 == 'Off':
+								r_data = r_data + 8
+							else:
+								r_data = r_data
 						x = x - 1
 						y = y + 1
 						#print ("lamp status data is %d", (r_data))
@@ -180,3 +316,4 @@ while True:
 	cam.release()
 	cv2.destroyAllWindows()
 	time.sleep(5)	#delay 5s
+'''
