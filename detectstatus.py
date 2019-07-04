@@ -83,6 +83,9 @@ def detect_LED_red(inImg, level):
     elif level == 11:
         saturation = 100
         brightness = 130  # special for some scenario, saturation is very low, but brightness is normal
+    elif level == 12:
+        saturation = 130
+        brightness = 140  # special for some scenario, saturation is very low, but brightness is normal
     elif level == 2:
         saturation = 130
         brightness = 100
