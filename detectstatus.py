@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import time
 
-cv_version = 36
+cv_version = 24
 
 def detect_LED_green(inImg, level):
     saturation = 130
