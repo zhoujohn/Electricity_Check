@@ -48,10 +48,10 @@ def set_camera(num):
 	return cam
 
 
-def read_anno_config():
+def read_anno_config(num):
 	counter = 0
 	matrix = []
-	with open("./config/anno.json") as load_f:
+	with open("./config/anno"+str(num)+".json") as load_f:
 		load_dict = json.load(load_f)
 		load_dict1 = load_dict["shapes"]
 		for val in load_dict1:
